@@ -10,7 +10,7 @@ This workflow helps businesses improve lead filtering and sales efficiency by au
 
 Below is the visual representation of the n8n workflow.
 
-![Workflow Diagram](workflow.png)
+![Workflow Diagram](lead_qualification.png)
 
 ---
 
@@ -18,7 +18,7 @@ Below is the visual representation of the n8n workflow.
 
 This project includes a custom-built frontend form that captures lead data and sends it to the n8n webhook for processing.
 
-![Frontend UI](frontend.png)
+![Frontend UI](Lead_form.png)
 
 ### Features of the Form
 
