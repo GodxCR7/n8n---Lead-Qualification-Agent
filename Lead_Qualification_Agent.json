@@ -1,0 +1,416 @@
+{
+  "name": "Lead_Qualification_Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-qualify",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -528,
+        0
+      ],
+      "id": "b6bdc942-a298-4693-80ee-5307ddecf927",
+      "name": "Webhook",
+      "webhookId": "f25b7bed-4e01-44d4-b463-001f4d661ed0"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3f845ec4-a1e1-4cac-8385-f00ad53c451c",
+              "name": "name",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "63cd4e44-f581-416a-97cf-d0414b05f6f6",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "a3ca727a-aa5b-4507-b98f-9287ce9f0f0d",
+              "name": "company",
+              "value": "={{ $json.body.company }}",
+              "type": "string"
+            },
+            {
+              "id": "057e466f-936d-4719-88d4-3a29212abc1d",
+              "name": "budget",
+              "value": "={{ $json.body.budget }}",
+              "type": "string"
+            },
+            {
+              "id": "8a3414bf-f5c9-4a09-9b78-2f0656c1e848",
+              "name": "message",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        0
+      ],
+      "id": "64d9317d-9a00-4430-b5fd-156431d9339a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "phi3:latest",
+          "mode": "list",
+          "cachedResultName": "phi3:latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a lead qualification expert. \nAnalyze the lead and respond ONLY with this exact JSON, nothing else:\n\n{\n  \"qualified\": true or false,\n  \"score\": 0-100,\n  \"reason\": \"one short sentence explaining why\",\n  \"priority\": \"high\" or \"medium\" or \"low\"\n}\n\nQualify as TRUE if: budget above 1000, company looks real, message shows genuine need.\n\nHere is the lead to analyze:\nName: {{ $json.name }}\nEmail: {{ $json.email }}\nCompany: {{ $json.company }}\nBudget: {{ $json.budget }}\nMessage: {{ $json.message }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        0
+      ],
+      "id": "4cf3deca-cd5a-4d32-8e51-e89d533c8f55",
+      "name": "Message a model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "o1bQzfSy40MfLofi",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9552cca5-619b-448d-a2d8-d25cca8b6ad9",
+              "leftValue": "={{ $json.content }}",
+              "rightValue": "\"qualified\": true",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "84b30edb-189f-4699-b3df-8c7ca0e1e591",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9fbb45e4-dfb4-466b-8ce6-d48ea8ac2855",
+              "name": "qualified",
+              "value": "=Congrats {{ $('Edit Fields').item.json.name }}! You are a qualified lead. Our team will contact you at {{ $('Edit Fields').item.json.email }} shortly.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        432,
+        -96
+      ],
+      "id": "138487dc-8b95-4f89-869c-b2cc3be51b19",
+      "name": "Response"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1My-jLOHGficocjYSqE-F8h-G6I7k_5E6Ubm3uU7nUUU",
+          "mode": "list",
+          "cachedResultName": "Lead_qualify",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1My-jLOHGficocjYSqE-F8h-G6I7k_5E6Ubm3uU7nUUU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 712284670,
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1My-jLOHGficocjYSqE-F8h-G6I7k_5E6Ubm3uU7nUUU/edit#gid=712284670"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Edit Fields').item.json.name }}",
+            "Email": "={{ $('Edit Fields').item.json.email }}",
+            "Company": "={{ $('Edit Fields').item.json.company }}",
+            "Budget": "={{ $('Edit Fields').item.json.budget }}",
+            "Message": "={{ $('Edit Fields').item.json.message }}",
+            "Status": "Qualified"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        -96
+      ],
+      "id": "b15e7ed4-524d-4165-83fb-719cafff3bfd",
+      "name": "Append row in sheet",
+      "executeOnce": false,
+      "retryOnFail": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MNbpZQpx0YQzUd1Y",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "698aa8cb-2f48-40c7-badb-3b0219c26fa7",
+              "name": "not_qualified",
+              "value": "=Thank you {{ $('Edit Fields').item.json.name }} for reaching out. Unfortunately you don't meet our criteria at this time.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        432,
+        96
+      ],
+      "id": "2f9b8eb0-5d64-4f58-bb17-0a771020473b",
+      "name": "False Response"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"status\": \"not_qualified\", \"message\": \"Thank you, you don't meet our criteria at this time.\"}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        704,
+        96
+      ],
+      "id": "35f0af2a-6fa7-44e4-a4f0-54d5efcb93c5",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"status\": \"qualified\", \"message\": \"Lead received and logged successfully!\"}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        896,
+        -96
+      ],
+      "id": "5c9b839a-f312-40ae-bdeb-9bce0e0efead",
+      "name": "Respond to Webhook1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "False Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "False Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "04ef3445-458a-43c9-9276-03c08c72a3bf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9700240794d8ff64afa051a20998ae4c25d509f815bbc22da4f5eb5b9ba63736"
+  },
+  "id": "aQymKkorUiEA0YJu",
+  "tags": []
+}
